@@ -16,8 +16,8 @@
             background-position: center;
         }
         
-        @media only screen and (max-width: 1500px) {
-        /* 在屏幕宽度小于等于 1500px 时应用下面的样式 */
+        @media only screen and (max-width: 768px) {
+        /* 在屏幕宽度小于等于 768 px 时应用下面的样式 */
         body {
             background-image: url('imgs/phoneground.jpg'); /* 切换到适合手机的背景图片 */
             background-size: cover;
@@ -131,12 +131,7 @@
     let upLoadImg
     let avatarIcon
     
-    const img1 = new Image();
-    img1.src ="./imgs/yanzhao.png"; // 图片的URL
 
-    img1.onload = function() {
-        ctx.drawImage(img1, 0, 0, canvas.width, canvas.height); // 在Canvas上绘制图片
-    };// 新增
 
     // 画canvas
     function drawImage(img) {
@@ -152,10 +147,28 @@
     function canvasToImg() {
         generateImg.src = canvas.toDataURL("image/png")
     }
+    
+    // 默认是第一张
+    img[0].onload = function () {
+        drawImage(img[0])
+        avatarIcon = img[0]
+        canvasToImg()
+    }
+    
+    const img1 = new Image();
+    img1.src ="./imgs/yanzhao.png"; // 图片的URL
 
+    img1.onload = function() {
+        drawImage(img1)
+        drawImage(avatarIcon)
+        canvasToImg()
+        upLoadImg = img1
+    };// 新增
+    
     // 点击icon
     ul.addEventListener('click', function (event) {
         if (event.target.nodeName.toLowerCase() === 'img') {
+            resetCanvas()
             upLoadImg && drawImage(upLoadImg)
             drawImage(event.target)
             canvasToImg()
@@ -177,12 +190,7 @@
             upLoadImg = img
         }
     })
-    // 默认是第一张
-    img[0].onload = function () {
-        drawImage(img[0])
-        avatarIcon = img[0]
-        canvasToImg()
-    }
+
 </script>
 </body>
 
