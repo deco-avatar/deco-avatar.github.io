@@ -58,7 +58,7 @@
         }
 
         .button2 {
-            margin: 0 auto 30px;
+            margin: 10px auto 30px;
             width: 120px;
             height: 15px;
             color: #333;
@@ -69,8 +69,8 @@
         }
 
         .generateImg {
-            width: 320px;
-            height: 320px;
+            width: 180px;
+            height: 180px;
             display: block;
             margin: auto;
         }
@@ -98,7 +98,7 @@
     </ul>
 
     <button class="button button1">上传图片</button>
-    <canvas id="canvas" width="180" height="180"></canvas>
+    <canvas id="canvas" width="320" height="320"></canvas>
     <img src="./imgs/yanzhao.png" class="generateImg">
     <input type="file" accept="image/*" hidden>
     
@@ -143,7 +143,9 @@
 
     img1.onload = function() {
         drawImage(img1)
+        drawImage(img[0])
         canvasToImg()
+        avatarIcon = img[0]
         upLoadImg = img1
     };// 新增
     
@@ -172,12 +174,6 @@
             upLoadImg = img
         }
     })
-        // 默认是第一张
-    img[0].onload = function () {
-        drawImage(img[0])
-        avatarIcon = img[0]
-        canvasToImg()
-    }
 
 </script>
 </body>
