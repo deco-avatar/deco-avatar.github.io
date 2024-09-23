@@ -132,7 +132,7 @@
     // 点击icon
     ul.addEventListener('click', function (event) {
         if (event.target.nodeName.toLowerCase() === 'img') {
-            resetCanvas()
+            // resetCanvas()
             upLoadImg && drawImage(upLoadImg)
             drawImage(event.target)
             canvasToImg()
