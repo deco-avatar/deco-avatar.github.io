@@ -148,19 +148,12 @@
         generateImg.src = canvas.toDataURL("image/png")
     }
     
-    // 默认是第一张
-    img[0].onload = function () {
-        drawImage(img[0])
-        avatarIcon = img[0]
-        canvasToImg()
-    }
     
     const img1 = new Image();
     img1.src ="./imgs/yanzhao.png"; // 图片的URL
 
     img1.onload = function() {
         drawImage(img1)
-        drawImage(avatarIcon)
         canvasToImg()
         upLoadImg = img1
     };// 新增
@@ -190,6 +183,12 @@
             upLoadImg = img
         }
     })
+        // 默认是第一张
+    img[0].onload = function () {
+        drawImage(img[0])
+        avatarIcon = img[0]
+        canvasToImg()
+    }
 
 </script>
 </body>
