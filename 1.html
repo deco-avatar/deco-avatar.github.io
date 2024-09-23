@@ -88,6 +88,9 @@
     <canvas id="canvas" width="320" height="320"></canvas>
     <img src="" class="generateImg">
     <input type="file" accept="image/*" hidden>
+    
+    <button>↑长按保存图片↑</button>//新增
+    
 </div>
 <!--<div style="left: 47%; position: absolute; top:90%;font-weight:bold;font-size:19px"> 恭喜您注册成功!</div>-->
 
@@ -103,7 +106,13 @@
     const fileUpload = document.querySelector('input')
     let upLoadImg
     let avatarIcon
+    
+    const img = new Image();
+    img.src ="./imgs/yanzhao.png"; // 图片的URL
 
+    img.onload = function() {
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height); // 在Canvas上绘制图片
+    };//新增
 
     // 画canvas
     function drawImage(img) {
