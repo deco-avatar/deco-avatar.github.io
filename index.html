@@ -1,192 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
-    <title>带你换头像的 华中科技大学研究生招生</title>
-    <style>
-        html,
-        body {
-            background-image: url('imgs/9.png');
-            background-attachment: fixed;
-            background-size: cover;
-            background-position: center;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>头像剪切</title>
+<style>
+.container {
+  text-align: center;
+}
 
-        ul {
-            width: 360px;
-            margin: 20px auto;
-            overflow: hidden;
-            list-style: none;
-            padding: 0;
-        }
+#preview {
+  max-width: 100%;
+  max-height: 300px;
+  margin: 20px 0;
+}
 
-        ul li {
-            width: 33.33%;
-            float: left;
-            padding: 10px; /* 原12 */
-            box-sizing: border-box;
-        }
+#preview img {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 50%;
+}
 
-        ul li img {
-            width: 100%;
-        }
+#upload {
+  display: none;
+}
 
-        canvas {
-            margin: auto;
-            display: none;
-            background: transparent;
-        }
-        .button {
-            display: block;
-             border: none;
-            outline: none;
-        }
-        
-        .button1 {
-            margin: 30px auto 10px;
-            width: 220px;
-            height: 60px;
-            color: #fff;
-            background: linear-gradient(#ffe984, #ed8917) #ed8917;
-            font-size: 22px;
-            font-weight: bold;
-            border-radius: 12px;
-        }
-
-        .button2 {
-            margin: 10px auto 30px;
-            width: 180px;
-            height: 24px;
-            color:  #fff;
-            background: linear-gradient(#ffe984, #ed8917) #ed8917;
-            font-size: 14px;
-            font-weight: bold;
-            border-radius: 6px;
-        }
-
-        .generateImg {
-            width: 270px;
-            height: 270px;
-            display: block;
-            margin: auto;
-        }
-
-        .cus-text {
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-        }
-
-        .custom-text {
-            margin-top: 40px;
-            text-align: center;
-            font-family: 'Times New Roman', Georgia, Serif;
-            font-size: 12px;
-            color: white;
-        }
-    </style>
+#btn-upload {
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+</style>
 </head>
-
 <body>
-<div class="cus-text">
-    <ul>
-        <li><img src="./imgs/1.png"></li>
-        <li><img src="./imgs/2.png"></li>
-        <li><img src="./imgs/3.png"></li>
-        <li><img src="./imgs/4.png"></li>
-        <li><img src="./imgs/5.png"></li>
-        <li><img src="./imgs/6.png"></li>
-    </ul>
-
-    <button class="button button1">上传图片</button>
-    <canvas id="canvas" width="1400" height="1400"></canvas>
-    <img src="" class="generateImg">
-    <input type="file" accept="image/*" hidden>
-    
-    <button  class="button button2">↑长按图片保存↑</button>
-     <p class="custom-text">欢迎关注微信公众号: 华中科技大学研究生招生</p>
+<div class="container">
+  <h1>头像上传和剪切</h1>
+  <input type="file" id="upload" accept="image/*">
+  <button id="btn-upload">选择图片</button>
+  <div id="preview"></div>
 </div>
 
-
-
 <script>
-    const ul = document.querySelector('ul')
-    const img = document.querySelectorAll('ul img')
-    const button = document.querySelector('button')
-    const canvas = document.querySelector('#canvas')
-    const ctx = canvas.getContext('2d')
-    const generateImg = document.querySelector('.generateImg')
-    const fileUpload = document.querySelector('input')
-    let upLoadImg
-    let avatarIcon
-    
+const uploadInput = document.getElementById('upload');
+const preview = document.getElementById('preview');
+const btnUpload = document.getElementById('btn-upload');
 
+btnUpload.addEventListener('click', function() {
+  uploadInput.click();
+});
 
-    // 画canvas
-    function drawImage(img) {
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
-    }
-
-    // 清空canvas
-    function resetCanvas() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height)
-        ctx.fillStyle = 'rgba(255, 255, 255, 0)'
-    }
-
-    function canvasToImg() {
-        generateImg.src = canvas.toDataURL("image/png")
-    }
-    
-
-    // 点击icon
-    ul.addEventListener('click', function (event) {
-        if (event.target.nodeName.toLowerCase() === 'img') {
-            resetCanvas()
-            upLoadImg && drawImage(upLoadImg)
-            drawImage(event.target)
-            canvasToImg()
-            avatarIcon = event.target
-        }
-    })
-    // 上传图片
-    button.addEventListener('click', function () {
-        fileUpload.click()
-    })
-    // 监听文件变化
-    fileUpload.addEventListener('change', function () {
-        var reader = new FileReader();
-            reader.onload = function (e) {
-                var image = new Image()
-                image.src = e.target.result
-
-                var cropper = new Cropper(image, {
-                    aspectRatio: 1, // 设置宽高比为1，即正方形
-                    viewMode: 1,
-                    autoCropArea: 1
-                });
-            };
-        reader.readAsDataURL(this.files[0]);
-        const img = cropper.getCroppedCanvas()
-        img.src = URL.createObjectURL(this.files[0])
-        img.onload = function () {
-            drawImage(img)
-            drawImage(avatarIcon)
-            canvasToImg()
-            upLoadImg = img
-        }
-    })
-
-    img[0].onload = function () {
-    drawImage(img[0])
-    avatarIcon = img[0]
-    canvasToImg()
-    }
+uploadInput.addEventListener('change', function() {
+  const file = this.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const img = new Image();
+      img.src = e.target.result;
+      img.onload = function() {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 200; // 设置剪切后的宽度
+        canvas.height = 200; // 设置剪切后的高度
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        preview.innerHTML = '';
+        preview.appendChild(canvas);
+      };
+    };
+    reader.readAsDataURL(file);
+  }
+});
 </script>
 </body>
-
 </html>
