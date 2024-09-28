@@ -159,7 +159,19 @@
     })
     // 监听文件变化
     fileUpload.addEventListener('change', function () {
-        const img = new Image()
+        var reader = new FileReader();
+            reader.onload = function (e) {
+                var image = new Image()
+                image.src = e.target.result
+
+                var cropper = new Cropper(image, {
+                    aspectRatio: 1, // 设置宽高比为1，即正方形
+                    viewMode: 1,
+                    autoCropArea: 1
+                });
+            };
+        reader.readAsDataURL(this.files[0]);
+        const img = cropper.getCroppedCanvas()
         img.src = URL.createObjectURL(this.files[0])
         img.onload = function () {
             drawImage(img)
