@@ -22,16 +22,12 @@
   max-height: 100%;
 }
 
-#upload {
-  display: none;
+#canvas-container {
+  margin-top: 20px;
 }
 
-#btn-upload {
-  padding: 10px 20px;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  cursor: pointer;
+#canvas {
+  border: 1px solid #ccc;
 }
 </style>
 </head>
@@ -41,12 +37,16 @@
   <input type="file" id="upload" accept="image/*">
   <button id="btn-upload">选择照片</button>
   <div id="preview"></div>
+  <div id="canvas-container">
+    <canvas id="canvas"></canvas>
+  </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.11/cropper.min.js"></script>
 <script>
 const uploadInput = document.getElementById('upload');
 const preview = document.getElementById('preview');
+const canvas = document.getElementById('canvas');
 const btnUpload = document.getElementById('btn-upload');
 let cropper;
 
@@ -68,14 +68,23 @@ uploadInput.addEventListener('change', function() {
         preview.appendChild(imgElement);
         
         cropper = new Cropper(imgElement, {
-          aspectRatio: 1, // 设置裁剪框的宽高比为1:1，可根据需要调整
-          viewMode: 1, // 设置裁剪框在画布中的显示模式
+          aspectRatio: 1,
+          viewMode: 1,
         });
       };
     };
     reader.readAsDataURL(file);
   }
 });
+
+function cropImage() {
+  const croppedCanvas = cropper.getCroppedCanvas();
+  canvas.width = croppedCanvas.width;
+  canvas.height = croppedCanvas.height;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(croppedCanvas, 0, 0, croppedCanvas.width, croppedCanvas.height);
+}
+
 </script>
 </body>
 </html>
