@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>头像剪切</title>
+<title>微信头像换</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.11/cropper.min.css">
 <style>
 .container {
   text-align: center;
@@ -13,12 +14,12 @@
   max-width: 100%;
   max-height: 300px;
   margin: 20px 0;
+  border: 1px solid #ccc;
 }
 
 #preview img {
   max-width: 100%;
   max-height: 100%;
-  border-radius: 50%;
 }
 
 #upload {
@@ -36,16 +37,18 @@
 </head>
 <body>
 <div class="container">
-  <h1>头像上传和剪切</h1>
+  <h1>微信头像换</h1>
   <input type="file" id="upload" accept="image/*">
-  <button id="btn-upload">选择图片</button>
+  <button id="btn-upload">选择照片</button>
   <div id="preview"></div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.11/cropper.min.js"></script>
 <script>
 const uploadInput = document.getElementById('upload');
 const preview = document.getElementById('preview');
 const btnUpload = document.getElementById('btn-upload');
+let cropper;
 
 btnUpload.addEventListener('click', function() {
   uploadInput.click();
@@ -59,13 +62,15 @@ uploadInput.addEventListener('change', function() {
       const img = new Image();
       img.src = e.target.result;
       img.onload = function() {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = 200; // 设置剪切后的宽度
-        canvas.height = 200; // 设置剪切后的高度
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
         preview.innerHTML = '';
-        preview.appendChild(canvas);
+        const imgElement = document.createElement('img');
+        imgElement.src = e.target.result;
+        preview.appendChild(imgElement);
+        
+        cropper = new Cropper(imgElement, {
+          aspectRatio: 1, // 设置裁剪框的宽高比为1:1，可根据需要调整
+          viewMode: 1, // 设置裁剪框在画布中的显示模式
+        });
       };
     };
     reader.readAsDataURL(file);
