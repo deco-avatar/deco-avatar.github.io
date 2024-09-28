@@ -29,6 +29,14 @@
 #canvas {
   border: 1px solid #ccc;
 }
+
+#btn-confirm {
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
 </style>
 </head>
 <body>
@@ -37,6 +45,7 @@
   <input type="file" id="upload" accept="image/*">
   <button id="btn-upload">选择照片</button>
   <div id="preview"></div>
+  <button id="btn-confirm">确认剪裁</button>
   <div id="canvas-container">
     <canvas id="canvas"></canvas>
   </div>
@@ -48,6 +57,7 @@ const uploadInput = document.getElementById('upload');
 const preview = document.getElementById('preview');
 const canvas = document.getElementById('canvas');
 const btnUpload = document.getElementById('btn-upload');
+const btnConfirm = document.getElementById('btn-confirm');
 let cropper;
 
 btnUpload.addEventListener('click', function() {
@@ -75,6 +85,10 @@ uploadInput.addEventListener('change', function() {
     };
     reader.readAsDataURL(file);
   }
+});
+
+btnConfirm.addEventListener('click', function() {
+  cropImage();
 });
 
 function cropImage() {
