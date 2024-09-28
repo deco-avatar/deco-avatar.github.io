@@ -142,9 +142,7 @@
         generateImg.src = canvas.toDataURL("image/png")
     }
     
-    avatarIcon = img[0]
-    upLoadImg = img
-    
+
     // 点击icon
     ul.addEventListener('click', function (event) {
         if (event.target.nodeName.toLowerCase() === 'img') {
@@ -171,6 +169,11 @@
         }
     })
 
+    img[0].onload = function () {
+    drawImage(img[0])
+    avatarIcon = img[0]
+    canvasToImg()
+    }
 </script>
 </body>
 
