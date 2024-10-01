@@ -3,102 +3,68 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>微信头像换</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.11/cropper.min.css">
+<title>每日打卡</title>
 <style>
-.container {
-  text-align: center;
-}
-
-#preview {
-  max-width: 100%;
-  max-height: 300px;
-  margin: 20px 0;
-  border: 1px solid #ccc;
-}
-
-#preview img {
-  max-width: 100%;
-  max-height: 100%;
-}
-
-#canvas-container {
-  margin-top: 20px;
-}
-
-#canvas {
-  border: 1px solid #ccc;
-}
-
-#btn-confirm {
-  padding: 10px 20px;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+    }
+    .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    button {
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+    }
 </style>
 </head>
 <body>
 <div class="container">
-  <h1>微信头像换</h1>
-  <input type="file" id="upload" accept="image/*">
-  <button id="btn-upload">选择照片</button>
-  <div id="preview"></div>
-  <button id="btn-confirm">确认剪裁</button>
-  <div id="canvas-container">
-    <canvas id="canvas"></canvas>
-  </div>
+    <h1>每日打卡</h1>
+    <p>点击下面按钮进行每日打卡：</p>
+    <button id="checkInBtn" onclick="checkIn()">打卡</button>
+    <div id="checkInStatus"></div>
+    <h2>打卡记录</h2>
+    <ul id="checkInHistory"></ul>
+    <p id="quote"></p>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.11/cropper.min.js"></script>
 <script>
-const uploadInput = document.getElementById('upload');
-const preview = document.getElementById('preview');
-const canvas = document.getElementById('canvas');
-const btnUpload = document.getElementById('btn-upload');
-const btnConfirm = document.getElementById('btn-confirm');
-let cropper;
+    let checkInHistory = [];
 
-btnUpload.addEventListener('click', function() {
-  uploadInput.click();
-});
+    function checkIn() {
+        let today = new Date().toDateString();
+        if (!checkInHistory.includes(today)) {
+            checkInHistory.push(today);
+            document.getElementById('checkInStatus').innerText = '打卡成功！';
+            updateCheckInHistory();
+            fetchQuoteOfTheDay();
+        } else {
+            document.getElementById('checkInStatus').innerText = '今天已经打过卡了！';
+        }
+    }
 
-uploadInput.addEventListener('change', function() {
-  const file = this.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      const img = new Image();
-      img.src = e.target.result;
-      img.onload = function() {
-        preview.innerHTML = '';
-        const imgElement = document.createElement('img');
-        imgElement.src = e.target.result;
-        preview.appendChild(imgElement);
-        
-        cropper = new Cropper(imgElement, {
-          aspectRatio: 1,
-          viewMode: 1,
+    function updateCheckInHistory() {
+        let checkInHistoryList = document.getElementById('checkInHistory');
+        checkInHistoryList.innerHTML = '';
+        checkInHistory.forEach(function (item) {
+            let li = document.createElement('li');
+            li.innerText = item;
+            checkInHistoryList.appendChild(li);
         });
-      };
-    };
-    reader.readAsDataURL(file);
-  }
-});
+    }
 
-btnConfirm.addEventListener('click', function() {
-  cropImage();
-});
-
-function cropImage() {
-  const croppedCanvas = cropper.getCroppedCanvas();
-  canvas.width = croppedCanvas.width;
-  canvas.height = croppedCanvas.height;
-  const ctx = canvas.getContext('2d');
-  ctx.drawImage(croppedCanvas, 0, 0, croppedCanvas.width, croppedCanvas.height);
-}
-
+    function fetchQuoteOfTheDay() {
+        fetch('https://favqs.com/api/qotd')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('quote').innerText = `每日名言：${data.quote.body} —${data.quote.author}`;
+            })
+            .catch(error => console.error('获取名言失败', error));
+    }
 </script>
 </body>
 </html>
