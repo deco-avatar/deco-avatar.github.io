@@ -23,6 +23,16 @@
 </head>
 <body>
 <div class="container">
+    <h1>用户登录</h1>
+    <label for="username">用户名:</label>
+    <input type="text" id="username">
+    <label for="password">密码:</label>
+    <input type="password" id="password">
+    <button onclick="login()">登录</button>
+    <p id="loginStatus"></p>
+</div>
+
+<div class="container" id="app" style="display: none;">
     <h1>每日打卡</h1>
     <p>点击下面按钮进行每日打卡：</p>
     <button id="checkInBtn" onclick="checkIn()">打卡</button>
@@ -30,21 +40,56 @@
     <h2>打卡记录</h2>
     <ul id="checkInHistory"></ul>
     <p id="quote"></p>
+    <h3>打卡记录查询</h3>
+    <label for="date">输入日期查询打卡记录 (格式: YYYY-MM-DD):</label>
+    <input type="text" id="queryDate">
+    <button onclick="queryCheckInHistory()">查询</button>
+    <ul id="queryResult"></ul>
+    <h3>打卡排行榜</h3>
+    <p>共有<span id="totalParticipants">0</span>人参与打卡</p>
+    <ol id="leaderboard"></ol>
 </div>
 
 <script>
+    let isLoggedIn = false;
     let checkInHistory = [];
+    let participants = {};
+
+    function login() {
+        let username = document.getElementById('username').value;
+        let password = document.getElementById('password').value;
+
+        // Simulating a simple login check
+        if (username === 'user' && password === 'password') {
+            isLoggedIn = true;
+            document.getElementById('loginStatus').innerText = '登录成功！';
+            document.getElementById('app').style.display = 'block';
+        } else {
+            document.getElementById('loginStatus').innerText = '登录失败，请检查用户名和密码！';
+        }
+    }
 
     function checkIn() {
-        let today = new Date().toDateString();
-        if (!checkInHistory.includes(today)) {
-            checkInHistory.push(today);
-            document.getElementById('checkInStatus').innerText = '打卡成功！';
-            updateCheckInHistory();
-            fetchQuoteOfTheDay();
+        if (isLoggedIn) {
+            let today = new Date().toDateString();
+            if (!checkInHistory.includes(today)) {
+                checkInHistory.push(today);
+                updateParticipants();
+                document.getElementById('checkInStatus').innerText = '打卡成功！';
+                updateCheckInHistory();
+                fetchQuoteOfTheDay();
+                updateLeaderboard();
+            } else {
+                document.getElementById('checkInStatus').innerText = '今天已经打过卡了！';
+            }
         } else {
-            document.getElementById('checkInStatus').innerText = '今天已经打过卡了！';
+            document.getElementById('checkInStatus').innerText = '请先登录后再进行打卡！';
         }
+    }
+
+    function updateParticipants() {
+        participants[checkInHistory.length] = (participants[checkInHistory.length] || 0) + 1;
+        document.getElementById('totalParticipants').innerText = Object.keys(participants).length;
     }
 
     function updateCheckInHistory() {
@@ -64,6 +109,34 @@
                 document.getElementById('quote').innerText = `每日名言：${data.quote.body} —${data.quote.author}`;
             })
             .catch(error => console.error('获取名言失败', error));
+    }
+
+    function queryCheckInHistory() {
+        let queryDate = document.getElementById('queryDate').value;
+        let queryResult = checkInHistory.filter(item => item === queryDate);
+        let queryResultList = document.getElementById('queryResult');
+        queryResultList.innerHTML = '';
+        if (queryResult.length > 0) {
+            queryResult.forEach(function (item) {
+                let li = document.createElement('li');
+                li.innerText = item;
+                queryResultList.appendChild(li);
+            });
+        } else {
+            let li = document.createElement('li');
+            li.innerText = '未找到该日期的打卡记录';
+            queryResultList.appendChild(li);
+        }
+    }
+
+    function updateLeaderboard() {
+        let leaderboard = document.getElementById('leaderboard');
+        leaderboard.innerHTML = '';
+        Object.keys(participants).sort((a, b) => b - a).forEach(function (key) {
+            let li = document.createElement('li');
+            li.innerText = `打卡次数: ${key}, 人数: ${participants[key]}`;
+            leaderboard.appendChild(li);
+        });
     }
 </script>
 </body>
